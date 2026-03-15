@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Modular Synth</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div id="toolbar"></div>
+
+<div id="canvas-container">
+  <div id="world">
+    <svg id="patch-canvas"></svg>
+  </div>
+</div>
+
+<div id="info-bar">
+  <span>Drag ports to patch. Right-click cable to remove. Scroll to zoom. Middle-drag or Space+drag to pan.</span>
+  <span id="zoom-display">100%</span>
+</div>
+
+<input type="file" id="import-file" accept=".json" style="display:none">
+
+<div id="toast"></div>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
