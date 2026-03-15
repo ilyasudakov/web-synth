@@ -141,18 +141,16 @@ function renderModule(mod) {
       oninput="modules[${mod.id}]._text=this.value">${savedText}</textarea>`;
   }
 
-  // Scope visualizer (collapsed by default, expanded for output)
+  // Visualizer (collapsed by default, expanded for output)
   const isOutput = mod.type === 'output';
   const hasAudio = mod.def.outputs.length > 0 || mod.def.inputs.includes('in');
   if (hasAudio) {
     html += `<div class="scope-section${isOutput ? ' open' : ''}" id="scope-section-${mod.id}">
-      <div class="scope-header">
-        <button class="scope-toggle" onclick="toggleScope(${mod.id})" title="Toggle visualizer">
-          <span class="scope-toggle-icon">${isOutput ? '\u25BC' : '\u25B6'}</span> Scope
-        </button>
-        <button class="scope-mode-btn" onclick="toggleScopeMode(${mod.id})" title="Wave / FFT">~</button>
+      <button class="scope-toggle" onclick="toggleScope(${mod.id})" title="Toggle visualizer">Visualizer</button>
+      <div class="scope-body">
+        <canvas class="scope-canvas" width="170" height="48"></canvas>
+        <button class="scope-mode-btn" onclick="toggleScopeMode(${mod.id})" title="Switch wave / spectrum">~</button>
       </div>
-      <canvas class="scope-canvas" width="170" height="48"></canvas>
     </div>`;
   }
 
@@ -227,10 +225,8 @@ function toggleScope(id) {
   if (isScopeActive(id)) {
     destroyScope(id);
     section.classList.remove('open');
-    section.querySelector('.scope-toggle-icon').textContent = '\u25B6';
   } else {
     section.classList.add('open');
-    section.querySelector('.scope-toggle-icon').textContent = '\u25BC';
     createScope(mod);
   }
 }

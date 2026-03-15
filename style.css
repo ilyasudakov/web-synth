@@ -476,30 +476,11 @@ select.module-select {
   z-index: 100;
 }
 
-/* ── Scope visualizer ── */
+/* ── Visualizer ── */
 
 .scope-section {
   border-top: 1px solid var(--border);
   margin-top: 8px;
-  overflow: hidden;
-}
-
-.scope-section .scope-canvas {
-  display: none;
-  width: 100%;
-  height: 48px;
-  border-radius: 0 0 7px 7px;
-}
-
-.scope-section.open .scope-canvas {
-  display: block;
-}
-
-.scope-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 4px 0;
 }
 
 .scope-toggle {
@@ -508,28 +489,43 @@ select.module-select {
   color: var(--text-muted);
   cursor: pointer;
   font-size: 10px;
-  padding: 2px 4px;
-  border-radius: 3px;
+  padding: 4px 0;
+  width: 100%;
+  text-align: left;
 }
 .scope-toggle:hover { color: var(--text); }
+.scope-section.open .scope-toggle { color: var(--text-dim); }
 
-.scope-toggle-icon {
-  font-size: 8px;
+.scope-body {
+  display: none;
+  position: relative;
+}
+.scope-section.open .scope-body { display: block; }
+
+.scope-canvas {
+  width: 100%;
+  height: 48px;
+  border-radius: 0 0 7px 7px;
 }
 
 .scope-mode-btn {
-  background: none;
-  border: 1px solid var(--border);
+  position: absolute;
+  top: 2px; right: 2px;
+  background: rgba(0,0,0,0.4);
+  border: none;
   color: var(--text-muted);
   cursor: pointer;
   font-size: 12px;
-  width: 22px; height: 22px;
+  width: 20px; height: 20px;
   border-radius: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  transition: opacity 0.15s;
 }
-.scope-mode-btn:hover { color: var(--text); border-color: var(--text-dim); }
+.scope-body:hover .scope-mode-btn { opacity: 1; }
+.scope-mode-btn:hover { color: #fff; background: rgba(0,0,0,0.6); }
 
 /* ── Selection rectangle ── */
 
