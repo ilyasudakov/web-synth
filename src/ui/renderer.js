@@ -69,7 +69,7 @@ function renderModule(mod) {
   let html = `
     <div class="module-header" data-drag="${mod.id}">
       <span>${mod.def.label}</span>
-      <span class="module-type">#${mod.id}</span>
+      <span style="flex:1"></span>
       <button class="module-bypass-btn" id="bypass-btn-${mod.id}" onclick="toggleBypass(event,${mod.id})" title="Bypass">&#9654;</button>
       <div class="module-menu-wrapper">
         <button class="module-menu-btn" onclick="toggleModuleMenu(event,${mod.id})">&#8942;</button>
