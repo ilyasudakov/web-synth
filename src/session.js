@@ -142,7 +142,11 @@ export function restoreSession(data, { silent = false } = {}) {
     }
   }
 
-  if (data.nextId) setModuleIdCounter(data.nextId);
+  // Ensure counter is above all existing module ids
+  const maxId = Object.keys(modules).length
+    ? Math.max(...Object.keys(modules).map(Number)) + 1
+    : 0;
+  setModuleIdCounter(Math.max(maxId, data.nextId || 0));
   isDirty = false;
   localStorage.setItem(CURRENT_KEY, JSON.stringify({ name: sessionName }));
   updateSessionUI();
