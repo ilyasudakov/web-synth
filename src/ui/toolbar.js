@@ -66,6 +66,7 @@ export function buildToolbarHTML() {
     { key: 'ambient', name: 'Ambient', desc: 'Slow S&amp;H &rarr; Osc + LFO &rarr; Filter &rarr; Delay &mdash; dreamy' },
     { key: 'mono-rack', name: 'Mono Rack', desc: 'Keyboard &rarr; Mono Voice &rarr; Delay &rarr; Reverb &mdash; complete synth' },
     { key: 'drums', name: 'Drums', desc: 'Drum Machine &rarr; Delay &rarr; Output &mdash; instant beats' },
+    { key: 'experimental-beat', name: 'Experimental Beat', desc: 'Breakbeat + random bass + filtered pad &mdash; full track' },
   ];
   let presetsHtml = presets.map(p => `
     <div class="dropdown-item" onclick="loadPreset('${p.key}');closeDropdowns()">
