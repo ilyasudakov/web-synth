@@ -326,16 +326,17 @@ export function removeModule(id) {
   markDirty();
 }
 
-function duplicateModule(id) {
+export function duplicateModule(id) {
   closeModuleMenus();
   const mod = modules[id];
-  if (!mod) return;
+  if (!mod) return null;
   const newMod = addModule(mod.type, mod.x + 30, mod.y + 30);
   for (const [k, v] of Object.entries(mod.params)) {
     newMod.params[k] = v;
     newMod.audio.setParam(k, v);
   }
   updateKnobVisuals(newMod);
+  return newMod;
 }
 
 function resetModuleParams(id) {

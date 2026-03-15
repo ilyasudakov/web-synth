@@ -5,7 +5,7 @@ import {
   getCableDrag, setCableDrag, drawDragCable, clearDragCable,
   screenToWorld, connectModules, updateCables,
 } from './ui/cables.js';
-import { getDragState, clearDragState } from './ui/renderer.js';
+import { getDragState, clearDragState, duplicateModule } from './ui/renderer.js';
 import { initKeyboardInput } from './ui/keyboard-input.js';
 import { buildToolbarHTML } from './ui/toolbar.js';
 import { initTheme } from './theme.js';
@@ -16,7 +16,7 @@ import { serializeSession, restoreSession } from './session.js';
 import {
   startMarquee, updateMarquee, endMarquee, isMarqueeActive,
   startMultiDrag, updateMultiDrag, endMultiDrag, isMultiDragging,
-  clearSelection, selectAll, deleteSelected, toggleSelect, getSelected,
+  clearSelection, selectAll, deleteSelected, toggleSelect, getSelected, selectModule,
   didMarqueeJustEnd,
 } from './ui/selection.js';
 
@@ -52,6 +52,22 @@ document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey) || (e.key === 'Z'))) {
     e.preventDefault();
     redo();
+    return;
+  }
+
+  // Ctrl+D — duplicate selected
+  if ((e.ctrlKey || e.metaKey) && e.key === 'd') {
+    e.preventDefault();
+    const sel = getSelected();
+    if (sel.size > 0) {
+      const ids = [...sel];
+      clearSelection();
+      ids.forEach(id => {
+        const newMod = duplicateModule(id);
+        if (newMod) selectModule(newMod.id, true);
+      });
+      markDirty();
+    }
     return;
   }
 
