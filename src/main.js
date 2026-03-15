@@ -1,5 +1,5 @@
 import { view } from './state.js';
-import { initViewport, handlePanMove, handlePanEnd, getIsPanning, isSpaceHeld } from './ui/viewport.js';
+import { initViewport, handlePanMove, handlePanEnd, getIsPanning, isPanActive } from './ui/viewport.js';
 import { handleKnobDrag, clearKnobDrag, isKnobDragging } from './ui/knobs.js';
 import {
   getCableDrag, setCableDrag, drawDragCable, clearDragCable,
@@ -88,7 +88,7 @@ window.addModule = (...args) => { const r = _origAddModule(...args); markDirty()
 document.getElementById('canvas-container').addEventListener('mousedown', (e) => {
   // Only start marquee on left click directly on canvas/world (not on a module or port)
   if (e.button !== 0) return;
-  if (isSpaceHeld()) return; // panning
+  if (isPanActive()) return; // panning (space or hand mode)
   const target = e.target;
   if (target.closest('.module') || target.closest('#toolbar') || target.closest('.patch-cable')) return;
 

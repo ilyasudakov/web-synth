@@ -6,6 +6,7 @@ import {
   loadSlot, deleteSlot, exportSession, importSession, renderSlots,
 } from '../session.js';
 import { toggleTheme } from '../theme.js';
+import { toggleHandMode } from './viewport.js';
 
 // Expose globals for inline handlers
 window.addModule = (type) => addModule(type);
@@ -20,6 +21,7 @@ window.deleteSlot = deleteSlot;
 window.exportSession = exportSession;
 window.importSession = importSession;
 window.toggleTheme = toggleTheme;
+window.toggleHandMode = toggleHandMode;
 
 export function toggleDropdown(id) {
   const el = document.getElementById(id);
@@ -133,6 +135,7 @@ export function buildToolbarHTML() {
 
     <div class="toolbar-separator"></div>
 
+    <button id="hand-mode-btn" onclick="toggleHandMode()" title="Hand tool (H)">&#9995;</button>
     <button id="theme-toggle" onclick="toggleTheme()" title="Toggle theme"></button>
   `;
 }

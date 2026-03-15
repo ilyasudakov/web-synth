@@ -4,10 +4,24 @@ import { updateCables } from './cables.js';
 let isPanning = false;
 let panStart = { x: 0, y: 0 };
 let spaceHeld = false;
+let handMode = false;
 
 export function isSpaceHeld() { return spaceHeld; }
+export function isHandMode() { return handMode; }
+export function isPanActive() { return spaceHeld || handMode; }
 export function getIsPanning() { return isPanning; }
-export function setIsPanning(val) { isPanning = val; }
+
+export function toggleHandMode() {
+  handMode = !handMode;
+  const container = document.getElementById('canvas-container');
+  container.style.cursor = handMode ? 'grab' : '';
+  updateHandModeUI();
+}
+
+function updateHandModeUI() {
+  const btn = document.getElementById('hand-mode-btn');
+  if (btn) btn.classList.toggle('active', handMode);
+}
 
 export function applyTransform() {
   const world = document.getElementById('world');
@@ -44,7 +58,7 @@ export function initViewport() {
   }, { passive: false });
 
   container.addEventListener('mousedown', (e) => {
-    if (e.button === 1 || (e.button === 0 && spaceHeld)) {
+    if (e.button === 1 || (e.button === 0 && (spaceHeld || handMode))) {
       e.preventDefault();
       isPanning = true;
       panStart = { x: e.clientX - view.panX, y: e.clientY - view.panY };
@@ -53,16 +67,22 @@ export function initViewport() {
   });
 
   document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
     if (e.code === 'Space' && !e.repeat && document.activeElement === document.body) {
       spaceHeld = true;
       container.style.cursor = 'grab';
+    }
+
+    if (e.code === 'KeyH' && !e.repeat && !e.ctrlKey && !e.metaKey) {
+      toggleHandMode();
     }
   });
 
   document.addEventListener('keyup', (e) => {
     if (e.code === 'Space') {
       spaceHeld = false;
-      if (!isPanning) container.style.cursor = '';
+      if (!isPanning) container.style.cursor = handMode ? 'grab' : '';
     }
   });
 
@@ -82,5 +102,5 @@ export function handlePanEnd() {
   if (!isPanning) return;
   isPanning = false;
   const container = document.getElementById('canvas-container');
-  container.style.cursor = spaceHeld ? 'grab' : '';
+  container.style.cursor = (spaceHeld || handMode) ? 'grab' : '';
 }
