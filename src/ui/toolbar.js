@@ -65,6 +65,7 @@ export function buildToolbarHTML() {
     { key: 'generative', name: 'Generative', desc: 'Clock &rarr; Sequencer &rarr; Osc &rarr; Filter &rarr; Delay &mdash; auto-plays' },
     { key: 'ambient', name: 'Ambient', desc: 'Slow S&amp;H &rarr; Osc + LFO &rarr; Filter &rarr; Delay &mdash; dreamy' },
     { key: 'mono-rack', name: 'Mono Rack', desc: 'Keyboard &rarr; Mono Voice &rarr; Delay &rarr; Reverb &mdash; complete synth' },
+    { key: 'drums', name: 'Drums', desc: 'Drum Machine &rarr; Delay &rarr; Output &mdash; instant beats' },
   ];
   let presetsHtml = presets.map(p => `
     <div class="dropdown-item" onclick="loadPreset('${p.key}');closeDropdowns()">

@@ -88,6 +88,14 @@ export function connectModules(src, dst) {
     srcMod._clockLinks.push({ target: dstMod, fn });
   }
 
+  // Clock → Drum Machine
+  if (srcMod.type === 'clock' && dstMod.type === 'drum-machine' && dst.portName === 'clock') {
+    const fn = () => dstMod.audio.advanceStep();
+    srcMod.audio.onTick(fn);
+    if (!srcMod._clockLinks) srcMod._clockLinks = [];
+    srcMod._clockLinks.push({ target: dstMod, fn });
+  }
+
   // Clock → S&H
   if (srcMod.type === 'clock' && dstMod.type === 'snh' && dst.portName === 'clock') {
     const fn = () => dstMod.audio.sample();

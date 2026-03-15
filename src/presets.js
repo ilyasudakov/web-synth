@@ -113,4 +113,14 @@ const PRESETS = {
     rev.audio.setParam('mix', 0.25); rev.params.mix = 0.25;
     connectModules({ moduleId: rev.id, portName: 'out' }, { moduleId: out.id, portName: 'in' });
   },
+
+  drums() {
+    const dm = addModule('drum-machine', 100, 50);
+    const del = addModule('delay', 400, 50);
+    const out = addModule('output', 650, 50);
+    connectModules({ moduleId: dm.id, portName: 'out' }, { moduleId: del.id, portName: 'in' });
+    del.audio.setParam('mix', 0.15); del.params.mix = 0.15;
+    del.audio.setParam('feedback', 0.3); del.params.feedback = 0.3;
+    connectModules({ moduleId: del.id, portName: 'out' }, { moduleId: out.id, portName: 'in' });
+  },
 };

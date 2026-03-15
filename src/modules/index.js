@@ -13,6 +13,8 @@ import keyboard from './keyboard.js';
 import output from './output.js';
 import text from './text.js';
 import monoVoice from './mono-voice.js';
+import drumVoice from './drum-voice.js';
+import drumMachine from './drum-machine.js';
 import visualizer from './visualizer.js';
 
 export const MODULE_DEFS = {
@@ -31,6 +33,8 @@ export const MODULE_DEFS = {
   output,
   text,
   'mono-voice': monoVoice,
+  'drum-voice': drumVoice,
+  'drum-machine': drumMachine,
   visualizer,
 };
 
@@ -40,6 +44,7 @@ export const MODULE_CATALOG = [
     section: 'Racks',
     items: [
       { type: 'mono-voice', name: 'Mono Voice', desc: 'Complete East Coast voice: OSC \u2192 Filter \u2192 VCA with built-in ADSR' },
+      { type: 'drum-machine', name: 'Drum Machine', desc: '4-voice drum sequencer: kick, snare, hat, clap with patterns' },
     ],
   },
   {
@@ -49,6 +54,7 @@ export const MODULE_CATALOG = [
       { type: 'lfo', name: 'LFO', desc: 'Low-frequency oscillator for modulating other params' },
       { type: 'noise', name: 'Noise', desc: 'White noise generator' },
       { type: 'keyboard', name: 'Keyboard', desc: 'Play notes with mouse or keys A-K' },
+      { type: 'drum-voice', name: 'Drum Voice', desc: 'Single percussion: kick, snare, hat, or clap' },
     ],
   },
   {
