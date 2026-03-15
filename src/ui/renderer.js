@@ -141,7 +141,12 @@ function renderModule(mod) {
       oninput="modules[${mod.id}]._text=this.value">${savedText}</textarea>`;
   }
 
-  // Visualizer (collapsed by default, expanded for output)
+  // Standalone Visualizer module — always-on large canvas
+  if (mod.type === 'visualizer') {
+    html += `<canvas class="viz-canvas" id="viz-canvas-${mod.id}" width="260" height="100"></canvas>`;
+  }
+
+  // Inline scope for other modules (collapsed by default, expanded for output)
   const isOutput = mod.type === 'output';
   const hasAudio = mod.def.outputs.length > 0 || mod.def.inputs.includes('in');
   if (hasAudio) {
@@ -167,6 +172,7 @@ function renderModule(mod) {
 
   // Auto-start scope for output module
   if (isOutput) createScope(mod);
+  if (mod.type === 'visualizer') startVisualizerModule(mod);
 }
 
 function renderKeyboardKeys() {
@@ -216,6 +222,75 @@ function setupKeyboard(el, mod) {
 }
 
 // ── Module actions ──
+// ── Standalone Visualizer module ──
+const vizAnims = new Map();
+
+function startVisualizerModule(mod) {
+  const canvas = document.getElementById(`viz-canvas-${mod.id}`);
+  if (!canvas) return;
+  const ctx2d = canvas.getContext('2d');
+  const analyser = mod.audio.analyser;
+
+  function draw() {
+    const w = canvas.width;
+    const h = canvas.height;
+    const styles = getComputedStyle(document.body);
+    const bg = styles.getPropertyValue('--bg').trim() || '#1a1a2e';
+    const line = styles.getPropertyValue('--accent').trim() || '#e94560';
+    const dim = styles.getPropertyValue('--text-muted').trim() || '#666';
+    const accent2 = styles.getPropertyValue('--accent2').trim() || '#533483';
+    const mode = mod.audio.getMode();
+
+    ctx2d.fillStyle = bg;
+    ctx2d.fillRect(0, 0, w, h);
+
+    if (mode === 'wave' || mode === 'both') {
+      const bufLen = analyser.frequencyBinCount;
+      const data = new Uint8Array(bufLen);
+      analyser.getByteTimeDomainData(data);
+      ctx2d.strokeStyle = dim;
+      ctx2d.lineWidth = 0.5;
+      ctx2d.beginPath();
+      ctx2d.moveTo(0, h / 2);
+      ctx2d.lineTo(w, h / 2);
+      ctx2d.stroke();
+      ctx2d.strokeStyle = line;
+      ctx2d.lineWidth = 1.5;
+      ctx2d.beginPath();
+      const slice = w / bufLen;
+      for (let i = 0; i < bufLen; i++) {
+        const y = (data[i] / 128.0) * (h / 2);
+        if (i === 0) ctx2d.moveTo(0, y); else ctx2d.lineTo(i * slice, y);
+      }
+      ctx2d.stroke();
+    }
+
+    if (mode === 'fft' || mode === 'both') {
+      const bufLen = analyser.frequencyBinCount;
+      const data = new Uint8Array(bufLen);
+      analyser.getByteFrequencyData(data);
+      const barW = w / (bufLen / 2) ;
+      ctx2d.fillStyle = mode === 'both' ? accent2 : line;
+      if (mode === 'both') ctx2d.globalAlpha = 0.5;
+      for (let i = 0; i < bufLen / 2; i++) {
+        const barH = (data[i] / 255) * h;
+        ctx2d.fillRect(i * barW, h - barH, Math.max(barW - 1, 1), barH);
+      }
+      ctx2d.globalAlpha = 1;
+    }
+
+    vizAnims.set(mod.id, requestAnimationFrame(draw));
+  }
+
+  draw();
+}
+
+function stopVisualizerModule(id) {
+  const anim = vizAnims.get(id);
+  if (anim) cancelAnimationFrame(anim);
+  vizAnims.delete(id);
+}
+
 function toggleScope(id) {
   const mod = modules[id];
   if (!mod) return;
@@ -239,6 +314,7 @@ function setModuleOption(modId, name, val) {
 export function removeModule(id) {
   closeModuleMenus();
   destroyScope(id);
+  stopVisualizerModule(id);
   const mod = modules[id];
   if (!mod) return;
   for (let i = cables.length - 1; i >= 0; i--) {

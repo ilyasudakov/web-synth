@@ -13,6 +13,7 @@ import keyboard from './keyboard.js';
 import output from './output.js';
 import text from './text.js';
 import monoVoice from './mono-voice.js';
+import visualizer from './visualizer.js';
 
 export const MODULE_DEFS = {
   oscillator,
@@ -30,6 +31,7 @@ export const MODULE_DEFS = {
   output,
   text,
   'mono-voice': monoVoice,
+  visualizer,
 };
 
 /** Module catalog for the "Add Module" dropdown */
@@ -77,6 +79,7 @@ export const MODULE_CATALOG = [
     section: 'Utility',
     items: [
       { type: 'text', name: 'Note', desc: 'Sticky note \u2014 jot down ideas on the canvas' },
+      { type: 'visualizer', name: 'Visualizer', desc: 'Waveform / spectrum display \u2014 pass-through audio' },
     ],
   },
 ];
