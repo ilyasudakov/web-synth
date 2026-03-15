@@ -1,13 +1,45 @@
 import { addModule, clearAll } from './ui/renderer.js';
 import { connectModules, updateCables } from './ui/cables.js';
 import { ensureAudio } from './audio.js';
+import { modules, view } from './state.js';
+import { applyTransform } from './ui/viewport.js';
 
 export function loadPreset(name) {
   ensureAudio();
   clearAll();
   const fn = PRESETS[name];
   if (fn) fn();
-  requestAnimationFrame(() => updateCables());
+  requestAnimationFrame(() => {
+    zoomToFit();
+    updateCables();
+  });
+}
+
+function zoomToFit() {
+  const mods = Object.values(modules);
+  if (mods.length === 0) return;
+  const container = document.getElementById('canvas-container');
+  const rect = container.getBoundingClientRect();
+  const pad = 40;
+
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const mod of mods) {
+    const w = mod.el?.offsetWidth || 180;
+    const h = mod.el?.offsetHeight || 150;
+    minX = Math.min(minX, mod.x);
+    minY = Math.min(minY, mod.y);
+    maxX = Math.max(maxX, mod.x + w);
+    maxY = Math.max(maxY, mod.y + h);
+  }
+
+  const contentW = maxX - minX + pad * 2;
+  const contentH = maxY - minY + pad * 2;
+  const zoom = Math.min(rect.width / contentW, rect.height / contentH, 1);
+
+  view.zoom = zoom;
+  view.panX = (rect.width - contentW * zoom) / 2 - minX * zoom + pad * zoom;
+  view.panY = (rect.height - contentH * zoom) / 2 - minY * zoom + pad * zoom;
+  applyTransform();
 }
 
 const PRESETS = {

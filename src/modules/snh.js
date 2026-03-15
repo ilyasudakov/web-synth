@@ -1,6 +1,6 @@
 export default {
   label: 'Sample & Hold',
-  inputs: ['clock', 'in'],
+  inputs: ['clock'],
   outputs: ['out'],
   params: {
     min_freq: { min: 50, max: 2000, default: 200, unit: 'Hz', log: true },

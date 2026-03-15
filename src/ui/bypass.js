@@ -25,14 +25,16 @@ export function wrapBypass(mod, audioCtx) {
   const isThroughModule = def.inputs.includes('in') && def.outputs.includes('out');
 
   if (isThroughModule) {
+    const origIn = audio.getInput('in');
+    const origOut = audio.getOutput('out');
+    // Skip bypass wiring if module doesn't actually have audio nodes for in/out
+    if (!origIn || !origOut) return;
     const splitter = audioCtx.createGain();
     const wetGain = audioCtx.createGain();
     const dryGain = audioCtx.createGain();
     const merger = audioCtx.createGain();
     dryGain.gain.value = 0;
     wetGain.gain.value = 1;
-    const origIn = audio.getInput('in');
-    const origOut = audio.getOutput('out');
     splitter.connect(origIn);
     origOut.connect(wetGain);
     wetGain.connect(merger);
