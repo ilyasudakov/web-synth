@@ -6,6 +6,7 @@ import { setupPorts, updateCables, connectModules, removeCable } from './cables.
 import { wrapBypass, toggleBypass } from './bypass.js';
 import { nextModuleId } from '../state.js';
 import { markDirty } from '../dirty.js';
+import { createScope, destroyScope, toggleScopeMode, isScopeActive } from './scope.js';
 
 // Expose globally for inline onclick handlers
 window.toggleModuleMenu = toggleModuleMenu;
@@ -15,6 +16,8 @@ window.duplicateModule = duplicateModule;
 window.resetModuleParams = resetModuleParams;
 window.disconnectModule = disconnectModule;
 window.setModuleOption = setModuleOption;
+window.toggleScope = toggleScope;
+window.toggleScopeMode = (id) => toggleScopeMode(id);
 
 const PIANO_NOTES = [
   { note: 'C', freq: 261.63, black: false },
@@ -138,6 +141,21 @@ function renderModule(mod) {
       oninput="modules[${mod.id}]._text=this.value">${savedText}</textarea>`;
   }
 
+  // Scope visualizer (collapsed by default, expanded for output)
+  const isOutput = mod.type === 'output';
+  const hasAudio = mod.def.outputs.length > 0 || mod.def.inputs.includes('in');
+  if (hasAudio) {
+    html += `<div class="scope-section${isOutput ? ' open' : ''}" id="scope-section-${mod.id}">
+      <div class="scope-header">
+        <button class="scope-toggle" onclick="toggleScope(${mod.id})" title="Toggle visualizer">
+          <span class="scope-toggle-icon">${isOutput ? '\u25BC' : '\u25B6'}</span> Scope
+        </button>
+        <button class="scope-mode-btn" onclick="toggleScopeMode(${mod.id})" title="Wave / FFT">~</button>
+      </div>
+      <canvas class="scope-canvas" width="170" height="48"></canvas>
+    </div>`;
+  }
+
   html += '</div>';
   el.innerHTML = html;
 
@@ -148,6 +166,9 @@ function renderModule(mod) {
   setupKnobs(el, mod);
   setupPorts(el, mod);
   if (mod.type === 'keyboard') setupKeyboard(el, mod);
+
+  // Auto-start scope for output module
+  if (isOutput) createScope(mod);
 }
 
 function renderKeyboardKeys() {
@@ -197,6 +218,23 @@ function setupKeyboard(el, mod) {
 }
 
 // ── Module actions ──
+function toggleScope(id) {
+  const mod = modules[id];
+  if (!mod) return;
+  const section = document.getElementById(`scope-section-${id}`);
+  if (!section) return;
+
+  if (isScopeActive(id)) {
+    destroyScope(id);
+    section.classList.remove('open');
+    section.querySelector('.scope-toggle-icon').textContent = '\u25B6';
+  } else {
+    section.classList.add('open');
+    section.querySelector('.scope-toggle-icon').textContent = '\u25BC';
+    createScope(mod);
+  }
+}
+
 function setModuleOption(modId, name, val) {
   const mod = modules[modId];
   if (mod) mod.audio.setOption(name, val);
@@ -204,6 +242,7 @@ function setModuleOption(modId, name, val) {
 
 export function removeModule(id) {
   closeModuleMenus();
+  destroyScope(id);
   const mod = modules[id];
   if (!mod) return;
   for (let i = cables.length - 1; i >= 0; i--) {

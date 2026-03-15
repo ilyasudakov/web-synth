@@ -476,6 +476,61 @@ select.module-select {
   z-index: 100;
 }
 
+/* ── Scope visualizer ── */
+
+.scope-section {
+  border-top: 1px solid var(--border);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.scope-section .scope-canvas {
+  display: none;
+  width: 100%;
+  height: 48px;
+  border-radius: 0 0 7px 7px;
+}
+
+.scope-section.open .scope-canvas {
+  display: block;
+}
+
+.scope-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 0;
+}
+
+.scope-toggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 10px;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.scope-toggle:hover { color: var(--text); }
+
+.scope-toggle-icon {
+  font-size: 8px;
+}
+
+.scope-mode-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  width: 22px; height: 22px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.scope-mode-btn:hover { color: var(--text); border-color: var(--text-dim); }
+
 /* ── Selection rectangle ── */
 
 #selection-rect {
