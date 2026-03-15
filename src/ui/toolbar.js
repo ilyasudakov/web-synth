@@ -73,8 +73,6 @@ export function buildToolbarHTML() {
     </div>`).join('');
 
   return `
-    <h1>WEB SYNTH</h1>
-
     <div class="dropdown-wrapper">
       <button class="toolbar-btn" onclick="toggleDropdown('modules-dropdown')">+ Add Module &#9662;</button>
       <div class="dropdown" id="modules-dropdown">${modulesHtml}</div>
