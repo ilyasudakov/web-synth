@@ -61,20 +61,28 @@ export function connectModules(src, dst) {
   const inNode = dstMod.audio.getInput(dst.portName);
   if (outNode && inNode) outNode.connect(inNode);
 
-  // Keyboard → Envelope gate
-  if (srcMod.type === 'keyboard' && dstMod.type === 'envelope' && dst.portName === 'gate') {
+  // Keyboard → any module with gate input and triggerAttack/Release
+  if (srcMod.type === 'keyboard' && dst.portName === 'gate' && dstMod.audio.triggerAttack) {
     if (!srcMod._linkedEnvelopes) srcMod._linkedEnvelopes = [];
     srcMod._linkedEnvelopes.push(dstMod);
   }
 
-  // Sequencer → Envelope gate
-  if (srcMod.type === 'sequencer' && dstMod.type === 'envelope' && dst.portName === 'gate') {
+  // Sequencer → any module with gate input and triggerAttack/Release
+  if (srcMod.type === 'sequencer' && dst.portName === 'gate' && dstMod.audio.triggerAttack) {
     srcMod.audio.linkedEnvelopes.push(dstMod);
   }
 
   // Clock → Sequencer
   if (srcMod.type === 'clock' && dstMod.type === 'sequencer' && dst.portName === 'clock') {
     const fn = () => dstMod.audio.advance();
+    srcMod.audio.onTick(fn);
+    if (!srcMod._clockLinks) srcMod._clockLinks = [];
+    srcMod._clockLinks.push({ target: dstMod, fn });
+  }
+
+  // Clock → any gate-able module (mono-voice, etc.)
+  if (srcMod.type === 'clock' && dst.portName === 'gate' && dstMod.audio.triggerAttack) {
+    const fn = () => { dstMod.audio.triggerAttack(); setTimeout(() => dstMod.audio.triggerRelease(), 100); };
     srcMod.audio.onTick(fn);
     if (!srcMod._clockLinks) srcMod._clockLinks = [];
     srcMod._clockLinks.push({ target: dstMod, fn });
@@ -104,10 +112,10 @@ export function removeCable(index) {
     const inNode = dstMod.audio.getInput(cable.dst.portName);
     if (outNode && inNode) { try { outNode.disconnect(inNode); } catch (e) { /* noop */ } }
 
-    if (srcMod.type === 'keyboard' && dstMod.type === 'envelope' && srcMod._linkedEnvelopes) {
+    if (srcMod.type === 'keyboard' && srcMod._linkedEnvelopes) {
       srcMod._linkedEnvelopes = srcMod._linkedEnvelopes.filter(e => e !== dstMod);
     }
-    if (srcMod.type === 'sequencer' && dstMod.type === 'envelope') {
+    if (srcMod.type === 'sequencer' && dstMod.audio.triggerAttack) {
       const idx = srcMod.audio.linkedEnvelopes.indexOf(dstMod);
       if (idx >= 0) srcMod.audio.linkedEnvelopes.splice(idx, 1);
     }

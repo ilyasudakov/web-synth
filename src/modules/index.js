@@ -12,6 +12,7 @@ import snh from './snh.js';
 import keyboard from './keyboard.js';
 import output from './output.js';
 import text from './text.js';
+import monoVoice from './mono-voice.js';
 
 export const MODULE_DEFS = {
   oscillator,
@@ -28,10 +29,17 @@ export const MODULE_DEFS = {
   keyboard,
   output,
   text,
+  'mono-voice': monoVoice,
 };
 
 /** Module catalog for the "Add Module" dropdown */
 export const MODULE_CATALOG = [
+  {
+    section: 'Racks',
+    items: [
+      { type: 'mono-voice', name: 'Mono Voice', desc: 'Complete East Coast voice: OSC \u2192 Filter \u2192 VCA with built-in ADSR' },
+    ],
+  },
   {
     section: 'Sources',
     items: [

@@ -92,4 +92,25 @@ const PRESETS = {
     lfo.audio.setParam('rate', 0.3); lfo.params.rate = 0.3;
     lfo.audio.setParam('depth', 500); lfo.params.depth = 500;
   },
+
+  'mono-rack'() {
+    const kb = addModule('keyboard', 50, 150);
+    const voice = addModule('mono-voice', 350, 50);
+    const del = addModule('delay', 650, 50);
+    const rev = addModule('reverb', 650, 280);
+    const out = addModule('output', 950, 150);
+
+    // Keyboard → Voice
+    connectModules({ moduleId: kb.id, portName: 'freq' }, { moduleId: voice.id, portName: 'pitch_cv' });
+    voice.audio.setParam('frequency', 0); voice.params.frequency = 0;
+    connectModules({ moduleId: kb.id, portName: 'gate' }, { moduleId: voice.id, portName: 'gate' });
+
+    // Voice → Delay → Reverb → Output
+    connectModules({ moduleId: voice.id, portName: 'out' }, { moduleId: del.id, portName: 'in' });
+    del.audio.setParam('mix', 0.3); del.params.mix = 0.3;
+    del.audio.setParam('time', 0.4); del.params.time = 0.4;
+    connectModules({ moduleId: del.id, portName: 'out' }, { moduleId: rev.id, portName: 'in' });
+    rev.audio.setParam('mix', 0.25); rev.params.mix = 0.25;
+    connectModules({ moduleId: rev.id, portName: 'out' }, { moduleId: out.id, portName: 'in' });
+  },
 };
