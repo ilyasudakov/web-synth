@@ -1,5 +1,5 @@
 import { view } from './state.js';
-import { initViewport, handlePanMove, handlePanEnd, getIsPanning, isPanActive } from './ui/viewport.js';
+import { initViewport, handlePanMove, handlePanEnd, getIsPanning, isPanActive, isHandMode, toggleHandMode } from './ui/viewport.js';
 import { handleKnobDrag, clearKnobDrag, isKnobDragging } from './ui/knobs.js';
 import {
   getCableDrag, setCableDrag, drawDragCable, clearDragCable,
@@ -71,8 +71,9 @@ document.addEventListener('keydown', (e) => {
     return;
   }
 
-  // Escape — clear selection
+  // Escape — exit hand mode first, then clear selection
   if (e.key === 'Escape') {
+    if (isHandMode()) { toggleHandMode(); return; }
     clearSelection();
   }
 });
