@@ -45,6 +45,16 @@ export function initViewport() {
 
   container.addEventListener('wheel', (e) => {
     e.preventDefault();
+
+    // Shift+scroll = horizontal pan (like Figma)
+    if (e.shiftKey) {
+      view.panX -= e.deltaY;
+      applyTransform();
+      updateCables();
+      return;
+    }
+
+    // Regular scroll = zoom
     const rect = container.getBoundingClientRect();
     const mx = e.clientX - rect.left;
     const my = e.clientY - rect.top;
