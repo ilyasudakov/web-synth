@@ -44,8 +44,12 @@ export function addModule(type, x, y) {
   if (x == null) {
     const container = document.getElementById('canvas-container');
     const rect = container.getBoundingClientRect();
-    x = (rect.width / 2 - view.panX) / view.zoom - 90 + (id % 5) * 30;
-    y = (rect.height / 2 - view.panY) / view.zoom - 80 + Math.floor(id / 5) * 30;
+    const centerX = (rect.width / 2 - view.panX) / view.zoom - 90;
+    const centerY = (rect.height / 2 - view.panY) / view.zoom - 80;
+    // Cascade new modules so they don't overlap
+    const count = Object.keys(modules).length;
+    x = centerX + (count % 4) * 200;
+    y = centerY + Math.floor(count / 4) * 60;
   }
 
   const mod = { id, type, def, audio, x, y, params: {}, el: null, bypassed: false };

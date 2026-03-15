@@ -99,7 +99,7 @@ document.addEventListener('input', () => markDirty());
 document.addEventListener('change', () => markDirty());
 
 const _origAddModule = window.addModule;
-window.addModule = (...args) => { const r = _origAddModule(...args); markDirty(); return r; };
+window.addModule = (...args) => { clearSelection(); const r = _origAddModule(...args); markDirty(); return r; };
 
 // ── Canvas mousedown — marquee selection ──
 document.getElementById('canvas-container').addEventListener('mousedown', (e) => {
